@@ -91,12 +91,20 @@ app = Flask(__name__)
 def q(path):
 	return redirect('/2016/treasure/claim-cube/' + path)
 
+# FIXME
+# Error reporting.
+# There should be some feedback for "Cube already claimed".
+# On the other hand, NoSuchCube can occur both
+# for browser requests and for AJAX requests.
+# Sounds like it should be easy to resolve and I was just a bit confused.
+
 # Cubes are URLs
 class NoSuchCube(NotFound):
 	description = 'Error: cube not found.'
 
 class NoSuchPlayer(BadRequest):
 	description = 'Error: player is neither CAKE nor PIE.'
+
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>')
 def cube_claim(cube_code):
@@ -120,6 +128,13 @@ def cube_claim_for(cube_code):
 			raise NoSuchCube()
 		cubes[cube_code] = player
 		transact.write(d)
+
+	score = { 'cake': 0, 'pie': 0 }
+	for (cube, player) in cubes.items():
+		if player:
+			score[player] += 1
+	return json.dumps(score)
+		
 
 # Catch-all: serve static file
 @app.route('/2016/treasure/<path:path>')

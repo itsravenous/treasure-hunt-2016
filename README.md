@@ -3,7 +3,8 @@ A race against your opponent to collect the most time cubes!
 
 Status:
  * mobile^W responsive frontend thanks to itsravenous
- * a web server serves templates/claim.html
+ * a web server serves templates/claim-cube.html
+ * buttons for claim-cube.html now update a DB and return a score
  * UNUSED: templates/index.html (player chooses to be cake or pie)
 
 ## webserver.sh
