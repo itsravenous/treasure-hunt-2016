@@ -2,14 +2,17 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1">
+
+    <base href="/2016/treasure/">
     <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
     <link href="time.css" rel="stylesheet">
     <script src="time.js"></script>
   </head>
   <body>
-    <form class="button-list">
-      <button type="submit" name="cake" value="f6c3ba2d">Claim for C.A.K.E</button>
-      <button type="submit" name="pie" value="cab2df7e">Claim for P.I.E</button>
+
+    <form class="button-list" action="claim-cube/{{ cube_code }}">
+      <button type="submit" name="claim-for" value="cake">Claim for C.A.K.E</button>
+      <button type="submit" name="claim-for" value="pie">Claim for P.I.E</button>
     </form>
     
   </body>

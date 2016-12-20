@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-function claim() {
-  var url = document.forms[0].action;
+function claim(name, value) {
+  var url = document.forms[0].action + '?' + name + '=' + value;
   var request = new XMLHttpRequest();
   request.open('POST', url, true);
   request.onload = function() {
