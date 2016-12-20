@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+
+<title>Printable cubes</title>
+
+<script type="text/plain" id="codes">
+put
+your
+secret
+codes
+here,
+and
+this
+page
+will
+turn
+them
+into
+qr
+codes
+</script>
+
+<!-- viewport according to ppk -->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+.squares {
+	page-break-inside: avoid;
+	border-collapse: collapse;
+}
+
+/*
+1px border is slightly thicker than necessary
+firefox will not style objects smaller than 1px
+make it 2x bigger, then select "scale: 50%" in print dialog
+*/
+.squares td {
+	width: 7cm;
+	height: 7cm;
+}
+.squares .square {
+	border: 1px solid;
+}
+</style>
+
+<script src="kjua.min.js"></script>
+
+<script>
+window.onload = function () {
+	"use strict";
+
+	// Get template nodes (removing them from document), without copying id attribute
+	var template = document.createDocumentFragment();
+	var template_container = document.getElementById("template");
+
+	while (template_container.firstChild != null) {
+		template.appendChild(template_container.firstChild);
+	}
+
+	var codes = document.getElementById("codes").text.trim().split(/\s/)
+
+	codes.forEach(function(code) {
+		var instance = template.cloneNode(true);
+
+		var qr = kjua({text: 'http://landing.duckdns.org/2016/q/' + code});
+		qr.style.width = '100%';
+		qr.style.height = '100%';
+
+		var container = instance.querySelector(".qr-container");
+		container.appendChild(qr);
+
+		document.body.appendChild(instance);
+	});
+};
+</script>
+
+</head>
+
+<div id="template">
+<!-- table does what I want.
+     I can't be bothered to remember table CSS -->
+<table role="presentation" class="squares">
+<tr>
+  <td></td>
+  <td class="square"></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td class="square"></td>
+  <td class="square qr-container"></td>
+  <td class="square"></td>
+  <td class="square"></td>
+</tr>
+<tr>
+  <td></td>
+  <td class="square"></td>
+  <td></td>
+  <td></td>
+</tr>
+</table>
+</div>
+
+</html>
+
