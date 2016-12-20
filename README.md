@@ -9,6 +9,13 @@ Status:
 ## webserver.sh
 Entry point, web server on port 5000
 
+## debug-webserver.sh
+The same flask webserver, but with the debugger enabled.
+NOTE Flask debugger allows arbitrary code execution.
+It will be protected with a PIN if Werkzeug is version 0.11 or later.
+The simplest way to check is to run it with networking disabled
+and check for a message showing the PIN :).
+
 ## portforward.sh
 Forward requests from port 80.
 For limitations & assumptions, please read script
