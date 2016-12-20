@@ -40,7 +40,7 @@ class DBTransaction:
 	def write(self, data):
 		newfilename = self.__filename + '.new'
 		with open(newfilename, 'w') as f:
-			json.dump(data, f)
+			json.dump(data, f, sort_keys=True, indent=4)
 			# f.flush()
 			# os.fsync(f.fileno())
 		os.rename(newfilename, self.__filename)
