@@ -1,4 +1,7 @@
 *.pyc
 
+db.json
+db.json.lock
+
 # secret
 codes
