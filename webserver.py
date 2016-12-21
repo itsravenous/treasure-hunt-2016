@@ -77,16 +77,18 @@ def dbinit():
 		# State
 		'cubes': cubes,
 
-		# Convenient summary to return to frontend
+		# Convenient summaries to return to frontend
 		#
 		# (the last entry is not a requirement for Tom to implement,
 		#  I just remembered the frontend didn't have any way to tell
 		#  even if it wanted)
+
 		'score': {
 			'cake': 0,
 			'pie': 0,
-			'game-over': False
-		}
+			'pizza': 0,
+		},
+		'game-over': False,
 	}
 
 # And just now I notice this db is initialized at web server start,
@@ -118,7 +120,7 @@ class NoSuchCube(NotFound):
 	description = 'Error: cube not found.'
 
 class NoSuchPlayer(BadRequest):
-	description = 'Error: player is neither CAKE nor PIE.'
+	description = 'Error: player is neither CAKE, PIE, nor PIZZA.'
 
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>')
@@ -134,8 +136,11 @@ def cube_claim(cube_code):
 
 @app.route('/2016/treasure/api/score')
 def score():
-	data = db.read()['score']
-	return jsonify(data)
+	d = db.read()
+	return jsonify({
+		'score': d['score'],
+		'game-over': d['game-over'],
+	})
 
 @app.route('/2016/treasure/api/claim-cube/<path:cube_code>', methods=['POST'])
 def cube_claim_for(cube_code):
@@ -161,12 +166,15 @@ def cube_claim_for(cube_code):
 		score[player] += 1
 
 		# Check if all cubes have been claimed
-		if score['cake'] + score['pie'] == len(cubes):
-			score['game-over'] = True
+		if sum(score.values()) == len(cubes):
+			d['game-over'] = True
 
 		transact.write(d)
 
-	return jsonify(score)
+	return jsonify({
+		'score': score,
+		'game-over': d['game-over'],
+	})
 
 # Catch-all: serve static file
 @app.route('/2016/treasure/<path:path>')
