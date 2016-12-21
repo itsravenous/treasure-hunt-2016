@@ -74,8 +74,19 @@ def dbinit():
 			cubes[code] = None
 
 	return {
+		# State
 		'cubes': cubes,
-		'score': { 'cake': 0, 'pie': 0 }
+
+		# Convenient summary to return to frontend
+		#
+		# (the last entry is not a requirement for Tom to implement,
+		#  I just remembered the frontend didn't have any way to tell
+		#  even if it wanted)
+		'score': {
+			'cake': 0,
+			'pie': 0,
+			'game-over': False
+		}
 	}
 
 # And just now I notice this db is initialized at web server start,
@@ -127,8 +138,9 @@ def cube_claim_for(cube_code):
 
 	with db.transact() as transact:
 		d = db.read()
-		cubes = d['cubes']
 
+		# Update cubes with claim
+		cubes = d['cubes']
 		try:
 			already_claimed = cubes[cube_code]
 		except KeyError:
@@ -137,10 +149,15 @@ def cube_claim_for(cube_code):
 			abort(400) # TODO
 		cubes[cube_code] = player
 
+		# Update count of cubes claimed
 		score = d['score']
 		if player not in score:
 			abort(400) # TODO
 		score[player] += 1
+
+		# Check if all cubes have been claimed
+		if score['cake'] + score['pie'] == len(cubes):
+			score['game-over'] = True
 
 		transact.write(d)
 
