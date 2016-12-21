@@ -8,7 +8,6 @@ import json
 # http://0pointer.de/blog/projects/locking
 from fcntl import flock, LOCK_EX
 
-
 # Doubtless I should have used sqlite
 # I just forget how to describe SQL with serializable transactions.
 class DB:
@@ -62,6 +61,7 @@ from flask import (
 	abort,
 	render_template,
 	send_from_directory,
+	jsonify
 )
 from werkzeug.exceptions import NotFound, BadRequest
 
@@ -73,11 +73,14 @@ def dbinit():
 			code = line.strip()
 			cubes[code] = None
 
-	return { 'cubes': cubes }
+	return {
+		'cubes': cubes,
+		'score': { 'cake': 0, 'pie': 0 }
+	}
 
-# And just now I realize this db is initialized at web server start,
-# and the db variable persists.  This is explicit, not an implementation
-# detail of Flask.
+# And just now I notice this db is initialized at web server start,
+# and the db variable persists.  I assume this is expected,
+# the alternative seems just too much magic.
 #
 # I might have gotten away without storing a file altogether!
 # (I don't know what sort of locking is required,
@@ -133,13 +136,15 @@ def cube_claim_for(cube_code):
 		if already_claimed:
 			abort(400) # TODO
 		cubes[cube_code] = player
+
+		score = d['score']
+		if player not in score:
+			abort(400) # TODO
+		score[player] += 1
+
 		transact.write(d)
 
-	score = { 'cake': 0, 'pie': 0 }
-	for (cube, player) in cubes.items():
-		if player:
-			score[player] += 1
-	return json.dumps(score)
+	return jsonify(score)
 		
 
 # Catch-all: serve static file
