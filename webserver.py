@@ -59,6 +59,7 @@ from flask import (
 	Flask,
 	request,
 	redirect,
+	abort,
 	render_template,
 	send_from_directory,
 )
@@ -108,6 +109,8 @@ class NoSuchPlayer(BadRequest):
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>')
 def cube_claim(cube_code):
+	# TODO: error response _here_ when cube is already claimed!
+
 	d = db.read()
 	cubes = d['cubes']
 	if cube_code not in cubes:
@@ -117,15 +120,18 @@ def cube_claim(cube_code):
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>', methods=['POST'])
 def cube_claim_for(cube_code):
-
-	# FIXME: validate player name
 	player = request.args.get('claim-for', '')
 
 	with db.transact() as transact:
 		d = db.read()
 		cubes = d['cubes']
-		if cube_code not in cubes:
+
+		try:
+			already_claimed = cubes[cube_code]
+		except KeyError:
 			raise NoSuchCube()
+		if already_claimed:
+			abort(400) # TODO
 		cubes[cube_code] = player
 		transact.write(d)
 
