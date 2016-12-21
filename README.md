@@ -26,6 +26,8 @@ It will be protected with a PIN if Werkzeug is version 0.11 or later.
 The simplest way to check is to run it with networking disabled
 and check for a message showing the PIN :).
 
+To reset the game, delete `db.json`.
+
 ## webserver.sh
 Production entry point, web server on port 5000.
 Debugger (and auto-reload) are disabled.
