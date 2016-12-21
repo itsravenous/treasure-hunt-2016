@@ -16,7 +16,7 @@ Codes are used in urls: `http://landing.duckdns.org/2016/q/$CODE`.
 
 ## cubes/cubes.html
 Create a copy of this HTML.  You can edit it to include your own codes.
-It will generate QR cubes for you to assemble
+It will render QR cubes for you to assemble
 (or you can scan them from your screen for testing purposes).
 
 ## debug-webserver.sh
