@@ -137,7 +137,8 @@ def apierror(e):
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>')
 def cube_claim(cube_code):
-	# TODO: error response _here_ when cube is already claimed!
+	# TODO: error response should (normally) be _here_,
+	# in the case where cube is already claimed!
 
 	d = db.read()
 	cubes = d['cubes']
@@ -152,7 +153,7 @@ def score():
 	d = db.read()
 	return jsonify({
 		'score': d['score'],
-		'game-over': d['game-over'],
+		'game_over': d['game_over'],
 	})
 
 @app.route('/2016/treasure/api/claim-cube/<path:cube_code>', methods=['POST'])
@@ -180,13 +181,13 @@ def cube_claim_for(cube_code):
 
 		# Check if all cubes have been claimed
 		if sum(score.values()) == len(cubes):
-			d['game-over'] = True
+			d['game_over'] = True
 
 		transact.write(d)
 
 	return jsonify({
 		'score': score,
-		'game-over': d['game-over'],
+		'game_over': d['game_over'],
 	})
 
 
