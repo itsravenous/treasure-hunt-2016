@@ -40,6 +40,9 @@ function claim(name, value) {
       result = JSON.parse(this.response);
 
       // TODO
+      // (Seriously.
+      //  Frontend will benefit significantly from some feedback
+      //  to show that the button has been pressed).
       showError(JSON.stringify(result));
     } else {
       // We reached our target server, but it returned an error
