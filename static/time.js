@@ -1,6 +1,7 @@
 // TODO
 function showError(message) {
-  document.body.textContent = message;
+  //document.body.textContent = message;
+  alert(message);
 }
 function unexpectedError() {
   showError('Sorry, there was an error in this application.');
