@@ -35,9 +35,12 @@ function claim(name, value) {
   var request = new XMLHttpRequest();
   request.open('POST', url, true);
   request.onload = function() {
+    result = JSON.parse(this.response);
+
     if (this.status >= 200 && this.status < 400) {
       // Success!
-      result = JSON.parse(this.response);
+      var scores = result.score;
+      var gameover = result.game_over;
 
       // TODO
       // (Seriously.
@@ -47,11 +50,13 @@ function claim(name, value) {
     } else {
       // We reached our target server, but it returned an error
 
-      // TODO
-      // This was under-specified.
-      // It should have been JSON, with a specific error code.
-      // It's OK to treat JSON as text, for right now though.
-      showError(this.response);
+      if (result.error = 1) {
+        // This line is okay, but showError() is still TODO
+        showError('This cube has already been claimed.');
+      } else {
+        unexpectedError();
+        console.log(result);
+      }
     }
   };
 

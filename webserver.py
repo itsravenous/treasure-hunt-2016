@@ -63,7 +63,7 @@ from flask import (
 	send_from_directory,
 	jsonify
 )
-from werkzeug.exceptions import NotFound, BadRequest
+from werkzeug.exceptions import NotFound
 
 def dbinit():
 	# cubes = { code: claimed_by }
@@ -88,7 +88,7 @@ def dbinit():
 			'pie': 0,
 			'pizza': 0,
 		},
-		'game-over': False,
+		'game_over': False,
 	}
 
 # And just now I notice this db is initialized at web server start,
@@ -108,19 +108,31 @@ app = Flask(__name__)
 def q(path):
 	return redirect('/2016/treasure/claim-cube/' + path)
 
-# FIXME
-# Error reporting.
-# There should be some feedback for "Cube already claimed".
-# On the other hand, NoSuchCube can occur both
-# for browser requests and for AJAX requests.
-# Sounds like it should be easy to resolve and I was just a bit confused.
 
-# Cubes are URLs
-class NoSuchCube(NotFound):
-	description = 'Error: cube not found.'
+# This works, not sure it's the absolute best
+class APIError(Exception):
+	pass
 
-class NoSuchPlayer(BadRequest):
-	description = 'Error: player is neither CAKE, PIE, nor PIZZA.'
+class CubeAlreadyClaimed(APIError):
+	code = 1
+	description = 'This cube has already been claimed.'
+
+class NoSuchPlayer(APIError):
+	code = 2
+	description = 'Player is neither CAKE, PIE, nor PIZZA.'
+
+class NoSuchCube(APIError):
+	code = 3
+	description = 'Cube not found.'
+
+@app.errorhandler(APIError)
+def apierror(e):
+	j = jsonify({
+		'error': e.code,
+		'description': e.description
+	})
+	j.status_code = 400
+	return j
 
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>')
@@ -130,9 +142,10 @@ def cube_claim(cube_code):
 	d = db.read()
 	cubes = d['cubes']
 	if cube_code not in cubes:
-		raise NoSuchCube()
+		raise NotFound("Cube not recognized.")
 
 	return render_template('claim-cube.html', cube_code=cube_code)
+
 
 @app.route('/2016/treasure/api/score')
 def score():
@@ -144,7 +157,7 @@ def score():
 
 @app.route('/2016/treasure/api/claim-cube/<path:cube_code>', methods=['POST'])
 def cube_claim_for(cube_code):
-	player = request.args.get('claim-for', '')
+	player = request.args.get('claim-for', None)
 
 	with db.transact() as transact:
 		d = db.read()
@@ -156,13 +169,13 @@ def cube_claim_for(cube_code):
 		except KeyError:
 			raise NoSuchCube()
 		if already_claimed:
-			abort(400) # TODO
+			raise CubeAlreadyClaimed()
 		cubes[cube_code] = player
 
 		# Update count of cubes claimed
 		score = d['score']
 		if player not in score:
-			abort(400) # TODO
+			raise NoSuchPlayer()
 		score[player] += 1
 
 		# Check if all cubes have been claimed
@@ -175,6 +188,7 @@ def cube_claim_for(cube_code):
 		'score': score,
 		'game-over': d['game-over'],
 	})
+
 
 # Catch-all: serve static file
 @app.route('/2016/treasure/<path:path>')
