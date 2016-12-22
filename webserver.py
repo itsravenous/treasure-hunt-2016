@@ -75,7 +75,7 @@ from flask import (
 	send_from_directory,
 	jsonify
 )
-from werkzeug.exceptions import NotFound
+from werkzeug.exceptions import NotFound, BadRequest
 
 def dbinit():
 	# cubes = { code: claimed_by }
@@ -135,7 +135,7 @@ class NoSuchPlayer(APIError):
 
 class NoSuchCube(APIError):
 	code = 3
-	description = 'Cube not found.'
+	description = 'Cube not recognized.'
 
 @app.errorhandler(APIError)
 def apierror(e):
@@ -155,18 +155,9 @@ def cube_claim(cube_code):
 	d = db.read()
 	cubes = d['cubes']
 	if cube_code not in cubes:
-		raise NotFound("Cube not recognized.")
+		raise NotFound('Cube not recognized.')
 
 	return render_template('claim-cube.html', cube_code=cube_code)
-
-
-@app.route('/2016/treasure/api/score')
-def score():
-	d = db.read()
-	return jsonify({
-		'score': d['score'],
-		'game_over': d['game_over'],
-	})
 
 @app.route('/2016/treasure/api/claim-cube/<path:cube_code>', methods=['POST'])
 def cube_claim_for(cube_code):
@@ -201,6 +192,56 @@ def cube_claim_for(cube_code):
 		'score': score,
 		'game_over': d['game_over'],
 	})
+
+
+@app.route('/2016/treasure/api/score')
+def score():
+	d = db.read()
+	return jsonify({
+		'score': d['score'],
+		'game_over': d['game_over'],
+	})
+
+
+prizes = [
+	'Collect £200!',
+	'Were you sleepy, or do you just fold easily?',
+	'You are a potato!',
+]
+names = {
+	'cake': 'C.A.K.E.',
+	'pie': 'P.I.E.',
+	'pizza': 'P.I.Z.Z.A.',
+}
+
+def winners():
+	d = db.read()
+	if not d['game_over']:
+		# This doesn't work quite right, for the API caller.
+		# (it returns HTML).
+		# But there are no _expected_ errors for the API,
+		# so it won't be necessary to interpret the errors in any way
+		raise BadRequest('There are still more cubes to collect')
+
+	scores = d['score'].items()
+	sorted_scores = sorted(scores, reverse=True, key=lambda item: item[1])
+	winners = [
+		{
+			'name': names[player],
+			'score': score,
+			'prize': prize,
+		}
+		for ((player, score), prize) in zip(sorted_scores, prizes)
+	]
+	return winners
+
+@app.route('/2016/treasure/winners')
+def winners_page():
+	return render_template('winners.html', winners=winners())
+
+@app.route('/2016/treasure/api/winners')
+def winners_api():
+	return jsonify(winners())
 
 
 # Catch-all: serve static file
