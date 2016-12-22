@@ -43,11 +43,14 @@ function claim(name, value) {
       var scores = result.score;
       var gameover = result.game_over;
 
-      // TODO
-      // (Seriously.
-      //  Frontend will benefit significantly from some feedback
-      //  to show that the button has been pressed).
-      showError(JSON.stringify(result));
+      if (gameover) {
+        // TODO (do we want AJAX or something?)
+        window.location = 'winners';
+      } else {
+        // TODO
+        showError(JSON.stringify(result));
+        // showError(JSON.stringify(scores));
+      }
     } else {
       // We reached our target server, but it returned an error
 
