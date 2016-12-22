@@ -1,4 +1,16 @@
 #!/usr/bin/python3
+# coding=UTF-8
+#
+# (I always forget, pound signs are not in ASCII :)
+
+# But, what the Flask quickstart didn't point out, is that the `flask` command
+# installed from OS packages is likely python2.  But I was writing for python3.
+# Sticking with `flask` for now, because I don't know if `flask-3` is what it's
+# called on Tom's computer.
+#
+# I only noticed because it caused a decoding error.
+# Tell python2 to work more like python3.
+from __future__ import unicode_literals
 
 import os
 import json
