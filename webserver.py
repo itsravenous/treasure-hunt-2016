@@ -220,36 +220,6 @@ prizes = [
 	'You are a potato!',
 ]
 
-def winners():
-	d = db.read()
-	if not d['game_over']:
-		# This doesn't work quite right, for the API caller.
-		# (it returns HTML).
-		# But there are no _expected_ errors for the API,
-		# so it won't be necessary to interpret the errors in any way
-		raise BadRequest('There are still more cubes to collect')
-
-	scores = d['score'].items()
-	sorted_scores = sorted(scores, reverse=True, key=lambda item: item[1])
-	winners = [
-		{
-			'name': player_names[player],
-			'score': score,
-			'prize': prize,
-		}
-		for ((player, score), prize) in zip(sorted_scores, prizes)
-	]
-	return winners
-
-@app.route('/2016/treasure/winners')
-def winners_page():
-	return render_template('winners.html', winners=winners())
-
-@app.route('/2016/treasure/api/winners')
-def winners_api():
-	return jsonify(winners())
-
-
 def rank_players_by_score(d):
 	scores = d['score'].items()
 	sorted_scores = sorted(scores, reverse=True, key=lambda item: item[1])
