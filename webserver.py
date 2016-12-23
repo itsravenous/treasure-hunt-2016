@@ -77,6 +77,13 @@ from flask import (
 )
 from werkzeug.exceptions import NotFound, BadRequest
 
+
+player_names = {
+	'cake': 'C.A.K.E.',
+	'pie': 'P.I.E.',
+	'pizza': 'P.I.Z.Z.A.',
+}
+
 def dbinit():
 	# cubes = { code: claimed_by }
 	cubes = {}
@@ -86,7 +93,7 @@ def dbinit():
 			cubes[code] = None
 
 	return {
-		# State
+		# Canonical state
 		'cubes': cubes,
 
 		# Convenient summaries to return to frontend
@@ -94,7 +101,7 @@ def dbinit():
 		# (the last entry is not a requirement for Tom to implement,
 		#  I just remembered the frontend didn't have any way to tell
 		#  even if it wanted)
-
+		#
 		'score': {
 			'cake': 0,
 			'pie': 0,
@@ -113,12 +120,6 @@ def dbinit():
 
 db = DB('db.json', init=dbinit)
 app = Flask(__name__)
-
-
-# URL pattern of re-usable qrcubes
-@app.route('/2016/q/<path:path>')
-def q(path):
-	return redirect('/2016/treasure/claim-cube/' + path)
 
 
 # This works, not sure it's the absolute best
@@ -146,6 +147,16 @@ def apierror(e):
 	j.status_code = 400
 	return j
 
+
+# URL pattern of re-usable qrcubes
+@app.route('/2016/q/<path:path>')
+def q(path):
+	return redirect('/2016/treasure/claim-cube/' + path)
+
+
+@app.route('/2016/treasure/intro/<path:player>')
+def welcome(player):
+	return render_template('welcome.html', player_name=player_names[player])
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>')
 def cube_claim(cube_code):
@@ -182,7 +193,7 @@ def cube_claim_for(cube_code):
 			raise NoSuchPlayer()
 		score[player] += 1
 
-		# Check if all cubes have been claimed
+		# Have all cubes have been claimed?
 		if sum(score.values()) == len(cubes):
 			d['game_over'] = True
 
@@ -208,11 +219,6 @@ prizes = [
 	'Were you sleepy, or do you just fold easily?',
 	'You are a potato!',
 ]
-names = {
-	'cake': 'C.A.K.E.',
-	'pie': 'P.I.E.',
-	'pizza': 'P.I.Z.Z.A.',
-}
 
 def winners():
 	d = db.read()
@@ -227,7 +233,7 @@ def winners():
 	sorted_scores = sorted(scores, reverse=True, key=lambda item: item[1])
 	winners = [
 		{
-			'name': names[player],
+			'name': player_names[player],
 			'score': score,
 			'prize': prize,
 		}
@@ -242,6 +248,41 @@ def winners_page():
 @app.route('/2016/treasure/api/winners')
 def winners_api():
 	return jsonify(winners())
+
+
+def rank_players_by_score(d):
+	scores = d['score'].items()
+	sorted_scores = sorted(scores, reverse=True, key=lambda item: item[1])
+	ranking = [player for (player, score) in sorted_scores]
+	return ranking
+
+@app.route('/2016/treasure/assessment/<path:assessed_player>')
+def assessment(assessed_player):
+	d = db.read()
+	if not d['game_over']:
+		raise BadRequest('There are still more cubes to collect')
+
+	ranking = rank_players_by_score(d)
+	ranked_players = [
+		{
+			'name': player_names[player],
+			'score': d['score'][player],
+		}
+		for player in ranking
+	]
+	
+	try:
+		rank = ranking.index(assessed_player)
+	except ValueError:
+		raise BadRequest('Player not found')
+	
+	assessment = prizes[rank]
+	data = {
+		'ranked_players': ranked_players,
+		'player_name': player_names[assessed_player],
+		'player_assessment': assessment
+	}
+	return render_template('assessment.html', **data)
 
 
 # Catch-all: serve static file

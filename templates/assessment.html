@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1">
+
+    <base href="/2016/treasure/">
+
+    <!--
+    <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
+    <link href="time.css" rel="stylesheet">
+    <script src="time.js"></script>
+    -->
+  </head>
+  <body>
+
+    <table>
+    {% for player in ranked_players %}
+      <tr><td>{{player.name}}</td> <td>{{player.score}} cubes</td>
+    {% endfor %}
+    </table>
+    
+    <h2>{{player_name}} ASSESSMENT</h2>
+    {{player_assessment}}
+  </body>
+</html>

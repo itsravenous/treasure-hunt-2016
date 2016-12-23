@@ -44,8 +44,8 @@ function claim(name, value) {
       var gameover = result.game_over;
 
       if (gameover) {
-        // TODO (do we want AJAX or something?)
-        window.location = 'winners';
+        // TODO
+        showError('Final cube recovered!  Now find the other competing agents and deliver this message.  Your performance assessments are ready.  Please review them carefully.')
       } else {
         // TODO
         showError(JSON.stringify(result));
