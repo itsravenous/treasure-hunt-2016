@@ -75,6 +75,10 @@ button {
   width: 7.75rem;
   height: 7.75rem;
   padding: 1rem;
+
+  /* Remove tap delay in IE/Edge */
+  -ms-touch-action: manipulation;	/* IE10  */
+	touch-action: manipulation;		/* IE11+ */
 }
 button.claimed {
   background: black;
