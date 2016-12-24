@@ -69,7 +69,7 @@ button {
 
   display: flex;
   box-sizing: border-box;
-  align-content: center;
+  align-items: center;
   justify-content: center;
 
   width: 7.75rem;
