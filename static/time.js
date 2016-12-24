@@ -1,5 +1,6 @@
 function showError(message) {
   document.forms[0].setAttribute('hidden', true);
+  document.body.parentNode.className = '';
   setTimeout(function() {
     var msg = document.createElement('p');
     msg.className = 'message';
