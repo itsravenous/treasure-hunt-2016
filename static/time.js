@@ -1,7 +1,13 @@
-// TODO
 function showError(message) {
-  //document.body.textContent = message;
-  alert(message);
+  document.forms[0].setAttribute('hidden', true);
+  setTimeout(function() {
+    var msg = document.createElement('p');
+    msg.className = 'message';
+    msg.innerHTML = message;
+    msg.setAttribute('hidden', true);
+    document.forms[0].parentNode.insertBefore(msg, document.forms[0]);
+    msg.removeAttribute('hidden');
+  }, 500);
 }
 function unexpectedError() {
   showError('Sorry, there was an error in this application.');
@@ -18,7 +24,6 @@ window.addEventListener('error', function() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('load')
   document.forms[0].addEventListener('submit', function(e) {
     e.preventDefault();
     return false;
@@ -47,14 +52,14 @@ function claim(name, value) {
       button.innerHTML = 'Claimed by ' + value.split('').join('.').toUpperCase();
 
       if (gameover) {
-        // TODO
-        showError('Final cube recovered!  Now find the other competing agents and deliver this message.  Your performance assessments are ready.  Please review them carefully.')
+        setTimeout(function() {
+          showError('Final cube recovered!  Now find the other competing agents and deliver this message.  Your performance assessments are ready.  Please review them carefully.');
+        }, 500);
       }
     } else {
       // We reached our target server, but it returned an error
 
       if (result.error = 1) {
-        // This line is okay, but showError() is still TODO
         showError('This cube has already been claimed.');
       } else {
         unexpectedError();

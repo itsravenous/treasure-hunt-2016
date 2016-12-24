@@ -17,12 +17,22 @@ body > :last-child {
   padding-bottom: 2rem; /* Hack in bottom padding when page scrolls */
 }
 
+[hidden] {
+  opacity: 0;
+  pointer-events: none;
+}
+.message {
+  transition: opacity 0.25s;
+}
+
+/* Claim styles */
 .button-list {
   display: flex;
   flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
+  transition: opacity 0.25s;
 }
 button {
   -webkit-appearance: none;
