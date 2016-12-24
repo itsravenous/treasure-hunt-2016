@@ -154,9 +154,10 @@ def q(path):
 	return redirect('/2016/treasure/claim-cube/' + path)
 
 
-@app.route('/2016/treasure/intro/<path:player>')
+@app.route('/2016/treasure/welcome/<path:player>/')
 def welcome(player):
 	return render_template('welcome.html', player_name=player_names[player])
+
 
 @app.route('/2016/treasure/claim-cube/<path:cube_code>')
 def cube_claim(cube_code):
