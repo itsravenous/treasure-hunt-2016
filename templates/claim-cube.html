@@ -11,9 +11,15 @@
   <body>
 
     <form class="button-list" action="api/claim-cube/{{ cube_code }}">
-      <button type="submit" name="claim-for" value="cake">Claim for C.A.K.E.</button>
-      <button type="submit" name="claim-for" value="pie">Claim for P.I.E.</button>
-      <button type="submit" name="claim-for" value="pizza">Claim for P.I.Z.Z.A.</button>
+      <button {% if claimed_by == "cake" %} class="claimed" {% endif %} {% if claimed_by %} disabled {% endif %} type="submit" name="claim-for" value="cake">
+         {% if claimed_by == "cake" %} Claimed by C.A.K.E. {% else %} Claim for C.A.K.E. {% endif %}
+      </button>
+      <button {% if claimed_by == "pie" %} class="claimed" {% endif %} {% if claimed_by %} disabled {% endif %}  type="submit" name="claim-for" value="pie">
+        {% if claimed_by == "pie" %} Claimed by P.I.E. {% else %} Claim for P.I.E. {% endif %}
+      </button>
+      <button {% if claimed_by == "pizza" %} class="claimed" {% endif %} {% if claimed_by %} disabled {% endif %}  type="submit" name="claim-for" value="pizza">
+        {% if claimed_by == "pizza" %} Claimed by P.I.Z.Z.A. {% else %} Claim for P.I.Z.Z.A. {% endif %}
+      </button>
     </form>
     
   </body>

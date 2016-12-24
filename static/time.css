@@ -44,6 +44,10 @@ button {
   height: 7.75rem;
   padding: 1rem;
 }
+button.claimed {
+  background: black;
+  color: white;
+}
 button:focus {
   outline: none;
 }

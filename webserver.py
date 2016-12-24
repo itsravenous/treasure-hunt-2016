@@ -168,7 +168,9 @@ def cube_claim(cube_code):
 	if cube_code not in cubes:
 		raise NotFound('Cube not recognized.')
 
-	return render_template('claim-cube.html', cube_code=cube_code)
+	claimed_by = cubes[cube_code]
+
+	return render_template('claim-cube.html', cube_code=cube_code, claimed_by=claimed_by)
 
 @app.route('/2016/treasure/api/claim-cube/<path:cube_code>', methods=['POST'])
 def cube_claim_for(cube_code):
