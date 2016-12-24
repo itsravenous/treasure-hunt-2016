@@ -48,6 +48,10 @@ function claim(name, value) {
       var scores = result.score;
       var gameover = result.game_over;
       var button = document.querySelector('button[value='+value+']');
+      var buttons = document.forms[0].getElementsByTagName('button');
+      for(var i = 0; i < buttons.length; i++) {
+        buttons[i].setAttribute('disabled', true);
+      }
       button.className += ' claimed';
       button.innerHTML = 'Claimed by ' + value.split('').join('.').toUpperCase();
 

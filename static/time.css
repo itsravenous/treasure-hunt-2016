@@ -64,3 +64,6 @@ button:focus {
 button:active {
   border-width: 10px
 }
+button[disabled]:active {
+  border-width: 3px;
+}
