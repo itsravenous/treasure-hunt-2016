@@ -6,12 +6,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  margin: 1.5rem 1rem;
   font-family: 'Space Mono', fixed;
 }
 
 body > * {
   max-width: 32rem;
+}
+body > :last-child {
+  padding-bottom: 2rem; /* Hack in bottom padding when page scrolls */
 }
 
 .button-list {
