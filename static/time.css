@@ -8,6 +8,13 @@ body {
   align-items: center;
   margin: 1.5rem 1rem;
   font-family: 'Space Mono', fixed;
+  /* Remove annoying interactions on touch devices. Probably terrible for accessibility */
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+  -khtml-user-select: none; /* Konqueror */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
 }
 
 body > * {
