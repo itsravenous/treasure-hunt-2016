@@ -42,14 +42,13 @@ function claim(name, value) {
       // Success!
       var scores = result.score;
       var gameover = result.game_over;
+      var button = document.querySelector('button[value='+value+']');
+      button.className += ' claimed';
+      button.innerHTML = 'Claimed by ' + value.split('').join('.').toUpperCase();
 
       if (gameover) {
         // TODO
         showError('Final cube recovered!  Now find the other competing agents and deliver this message.  Your performance assessments are ready.  Please review them carefully.')
-      } else {
-        // TODO
-        showError(JSON.stringify(result));
-        // showError(JSON.stringify(scores));
       }
     } else {
       // We reached our target server, but it returned an error
