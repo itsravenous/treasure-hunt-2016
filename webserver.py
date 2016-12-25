@@ -13,7 +13,23 @@
 from __future__ import unicode_literals
 
 import os
+import socket
+from select import select
 import json
+import traceback
+
+def speak_update(klass, text):
+	try:
+		sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+		sock.setblocking(0)
+		sock.connect('speech.socket')
+		(_, write, _) = select([], [sock], [], 0)
+		if not write:
+			return
+		msg = { 'class': klass, 'text': text }
+		sock.send(json.dumps(msg).encode('UTF-8'))
+	except Exception:
+		traceback.print_exc()
 
 # BSD file locks.  See
 # "On the Brokenness of File Locking"
@@ -201,6 +217,21 @@ def cube_claim_for(cube_code):
 			d['game_over'] = True
 
 		transact.write(d)
+
+	def speak_update_player(player):
+		player_score = score[player]
+		speak_update(player, '{0} has {1} {2}.'.format(
+		                     player.capitalize(),
+		                     player_score,
+		                     'cube' if player_score == 1 else 'cubes'))
+
+	if d['game_over']:
+		speak_update('game',
+		             'All cubes have been recovered!  Your performance assessments are now ready.  Please make sure to read them carefully.')
+		for each_player in d['score'].keys():
+			speak_update_player(each_player)
+	else:
+		speak_update_player(player)
 
 	return jsonify({
 		'score': score,

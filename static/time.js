@@ -1,7 +1,7 @@
 function showError(message) {
   document.forms[0].setAttribute('hidden', true);
-  document.body.parentNode.className = '';
   setTimeout(function() {
+    document.body.parentNode.className = '';
     var msg = document.createElement('p');
     msg.className = 'message';
     msg.innerHTML = message;
@@ -58,7 +58,7 @@ function claim(name, value) {
 
       if (gameover) {
         setTimeout(function() {
-          showError('Final cube recovered!  Now find the other competing agents and deliver this message.  Your performance assessments are ready.  Please review them carefully.');
+          showError('Find the other competing agents and deliver this message:  All cubes have been recovered!  Your performance assessments are now ready.  Please make sure to read them carefully.');
         }, 500);
       }
     } else {

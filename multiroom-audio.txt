@@ -1,0 +1,44 @@
+single network segment (L2 multicast audio)
+
+server:
+ paprefs
+  RTP: enable RTP sender
+  send output from local speakers
+
+ gconf-editor
+  /system/pulseaudio/modules/rtp-send
+   args0
+
+"consider passing rate=8000 format=ulaw channels=1 to the sender module to save bandwith while still maintaining good quality for speech transmission."
+
+sound output -> rtp
+
+ pulseaudio --kill
+
+client:
+DISABLE FIREWALL
+
+paprefs
+ enable rtp recv
+
+gconf-editor
+   /system/pulseaudio/modules/rtp-recv
+   args0
+
+latency_msec=...
+100 not too bad?
+
+
+
+OR
+server:
+destination_ip
+
+client:
+sap_address
+
+
+OR
+pactl load-module module-rtp-send source=@DEFAULT_MONITOR@ loop=0 rate=8000 format=ulaw channels=1 destination_ip=172.16.13.222
+
+May need to reboot router.  (If you have saturated it using multicast, and now unicast is unexpectedly bad with constant interruptions to the audio.)  _Rebooting_ linux PCs will probably not help, not more than logging in+out.
